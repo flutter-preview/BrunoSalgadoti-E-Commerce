@@ -1,3 +1,4 @@
+import 'package:ecommerce/common/button/custom_icon_button.dart';
 import 'package:ecommerce/common/custom_drawer/custom_drawer.dart';
 import 'package:ecommerce/common/empty_indicator.dart';
 import 'package:ecommerce/models/admin_orders_manager.dart';
@@ -18,23 +19,54 @@ class AdminOrdersScreen extends StatelessWidget {
       ),
       body: Consumer<AdminOrdersManager>(
         builder: (_, adminOrdersManager, __) {
-          if (adminOrdersManager.orders.isEmpty) {
-            return const Center(
-              child: EmptyIndicator(
-                title: 'Aguardando vendas...',
-                iconData: Icons.border_clear,
-                image: null,
-              ),
-            );
-          }
-          return ListView.builder(
-              itemCount: adminOrdersManager.orders.length,
-              itemBuilder: (_, index) {
-                return OrderTile(
-                    adminOrdersManager.orders.reversed.toList()[index],
-                  showControls: true,
-                );
-              });
+          final filteredOrders = adminOrdersManager.filteredOrders;
+
+          return Column(
+            children: [
+              if (adminOrdersManager.userFilter != null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 2),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Pedidos de: ${adminOrdersManager.userFilter!.userName ?? ''}',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      CustomIconButton(
+                        iconData: Icons.close,
+                        color: Colors.white,
+                        onTap: () {
+                          adminOrdersManager.setUserFilter(null);
+                        },
+                      )
+                    ],
+                  ),
+                ),
+              if (filteredOrders.isEmpty)
+                const Expanded(
+                    child: EmptyIndicator(
+                  title: 'Aguardando vendas...',
+                  iconData: Icons.border_clear,
+                  image: null,
+                ))
+              else
+                Expanded(
+                  child: ListView.builder(
+                      itemCount: filteredOrders.length,
+                      itemBuilder: (_, index) {
+                        return OrderTile(
+                          filteredOrders[index],
+                          showControls: true,
+                        );
+                      }),
+                )
+            ],
+          );
         },
       ),
     );

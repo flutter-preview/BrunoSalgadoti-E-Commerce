@@ -1,6 +1,7 @@
 import 'package:alphabet_list_scroll_view_fix/alphabet_list_scroll_view.dart';
 import 'package:ecommerce/common/custom_drawer/custom_drawer.dart';
 import 'package:ecommerce/common/search_dialog.dart';
+import 'package:ecommerce/models/admin_users_manager.dart';
 import 'package:ecommerce/models/admin_users_search.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -77,8 +78,8 @@ class AdminUsersScreen extends StatelessWidget {
             )
           ],
         ),
-        body: Consumer<AdminUsersSearch>(
-          builder: (_, adminUsersSearch, __) {
+        body: Consumer2<AdminUsersSearch, AdminUsersManager>(
+          builder: (_, adminUsersSearch, adminUsersManager, __) {
             return AlphabetListScrollView(
               strList: adminUsersSearch.names,
               normalTextStyle: const TextStyle(color: Colors.white),

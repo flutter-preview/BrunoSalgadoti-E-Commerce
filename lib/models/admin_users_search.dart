@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce/common/button/custom_text_button.dart';
 import 'package:ecommerce/common/show_alert_dialog.dart';
+import 'package:ecommerce/models/admin_orders_manager.dart';
+import 'package:ecommerce/models/page_manager.dart';
 import 'package:ecommerce/models/users.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AdminUsersSearch extends ChangeNotifier {
@@ -20,11 +23,12 @@ class AdminUsersSearch extends ChangeNotifier {
   List<Widget> favouriteList = [];
   List<Widget> normalList = [];
 
-  List<String> get names =>
-      allUsers.map((e) => e.userName!.toUpperCase()).toList();
+  List<String> get names => allUsers
+      .where((user) => !user.favourite!)
+      .map((user) => user.userName!.toUpperCase())
+      .toList();
 
-  List<String> get emails =>
-      allUsers.map((e) => e.email).toList();
+  List<String> get emails => allUsers.map((e) => e.email).toList();
 
   String get search => _search;
 
@@ -44,11 +48,10 @@ class AdminUsersSearch extends ChangeNotifier {
       allUsers = filteredUsers;
     } else {
       userFilteredSendEmail = true;
-      filteredUsers.addAll(allUsers.where((u) =>
-          u.userName!
-              .toString()
-              .toLowerCase()
-              .contains(search.toString().toLowerCase())));
+      filteredUsers.addAll(allUsers.where((u) => u.userName!
+          .toString()
+          .toLowerCase()
+          .contains(search.toString().toLowerCase())));
       allUsers = filteredUsers;
     }
     return filteredUsers;
@@ -69,7 +72,7 @@ class AdminUsersSearch extends ChangeNotifier {
     String? encodeQueryParameters(Map<String, String> params) {
       return params.entries
           .map((MapEntry<String, String> e) =>
-      '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
           .join('&');
     }
 
@@ -87,19 +90,13 @@ class AdminUsersSearch extends ChangeNotifier {
   }
 
   Future<void> _favoringUser(String? id) async {
-    await firestore
-        .collection('users')
-        .doc(id)
-        .update({
+    await firestore.collection('users').doc(id).update({
       'favourite': true,
     });
   }
 
   Future<void> _disfavoringUser(String? id) async {
-    await firestore
-        .collection('users')
-        .doc(id)
-        .update({
+    await firestore.collection('users').doc(id).update({
       'favourite': false,
     });
   }
@@ -138,51 +135,49 @@ class AdminUsersSearch extends ChangeNotifier {
                   backgroundColor: Colors.cyanAccent,
                   icon: Icons.email,
                   onPressed: (context) {
-                    _sendEmail(
-                        user.email,
-                        user.userName!);
+                    _sendEmail(user.email, user.userName!);
                   },
                 ),
               ],
             ),
-            child: ListTile(
-              leading: Stack(
-                children: const <Widget>[
-                  CircleAvatar(
-                    backgroundImage:
-                    NetworkImage("https://placeimg.com/200/200/people"),
+            child: Consumer2<AdminOrdersManager, PageManager>(
+              builder: (_, adminOrdersManager, pageManager, __) {
+                return ListTile(
+                  leading: Stack(
+                    children: const <Widget>[
+                      CircleAvatar(
+                        backgroundImage:
+                            NetworkImage("https://placeimg.com/200/200/people"),
+                      ),
+                      SizedBox(
+                          height: 40,
+                          width: 40,
+                          child: Center(
+                            child: Icon(
+                              Icons.star,
+                              color: Colors.yellow,
+                            ),
+                          ))
+                    ],
                   ),
-                  SizedBox(
-                      height: 40,
-                      width: 40,
-                      child: Center(
-                        child: Icon(
-                          Icons.star,
-                          color: Colors.yellow,
-                        ),
-                      ))
-                ],
-              ),
-              title: Text(
-                  user.userName!,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white
-                  )),
-              subtitle: Text(
-                user.email,
-                style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.white),
-              ),
+                  title: Text(user.userName!,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w800, color: Colors.white)),
+                  subtitle: Text(
+                    user.email,
+                    style: const TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                  onTap: () {
+                    adminOrdersManager.setUserFilter(user);
+                    pageManager.setPage(5);
+                  },
+                );
+              },
             ),
           ),
         );
-      }
-    }
-    for (var user in users) {
-        normalList.add(
-          Slidable(
+      } else {
+        normalList.add(Slidable(
             startActionPane: ActionPane(
               motion: const DrawerMotion(),
               extentRatio: 0.25,
@@ -210,67 +205,73 @@ class AdminUsersSearch extends ChangeNotifier {
                       userFilteredSendEmail == true
                           ? _sendEmail(user.email, user.userName)
                           : showDialog<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return ShowAlertDialog(
-                              titleText: 'Enviar E-mail',
-                              titleSize: 18,
-                              titleColor: Colors.black,
-                              bodyText: 'Escolha para quem deseja enviar\n '
-                                  'o E-mail!',
-                              bodyWeight: FontWeight.normal,
-                              actions: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .spaceBetween,
-                                  children: [
-                                    CustomTextButton(
-                                      text: 'Este Contato',
-                                      icon: null,
-                                      onPressed: () {
-                                        _sendEmail(user.email, user.userName);
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                    CustomTextButton(
-                                      text: 'Todos contatos!',
-                                      icon: null,
-                                      onPressed: () {
-                                        _sendEmail(null, null);
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                    CustomTextButton(
-                                        text: 'Cancelar',
-                                        icon: null,
-                                        color: Colors.red,
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        }
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ShowAlertDialog(
+                                  titleText: 'Enviar E-mail',
+                                  titleSize: 18,
+                                  titleColor: Colors.black,
+                                  bodyText: 'Escolha para quem deseja enviar\n '
+                                      'o E-mail!',
+                                  bodyWeight: FontWeight.normal,
+                                  actions: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        CustomTextButton(
+                                          text: 'Este Contato',
+                                          icon: null,
+                                          onPressed: () {
+                                            _sendEmail(
+                                                user.email, user.userName);
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        CustomTextButton(
+                                          text: 'Todos contatos!',
+                                          icon: null,
+                                          onPressed: () {
+                                            _sendEmail(null, null);
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        CustomTextButton(
+                                            text: 'Cancelar',
+                                            icon: null,
+                                            color: Colors.red,
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            }),
+                                      ],
                                     ),
                                   ],
-                                ),
-                              ],
-                            );
-                          });
+                                );
+                              });
                     }),
               ],
             ),
-            child: ListTile(
-              leading: const CircleAvatar(
-                backgroundImage:
-                NetworkImage("https://placeimg.com/200/200/people"),
-              ),
-              title: Text(user.userName!,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w800, color: Colors.white)),
-              subtitle: Text(
-                user.email,
-                style: const TextStyle(fontSize: 16, color: Colors.white),
-              ),
-            ),
-          ),
-        );
+            child: Consumer2<AdminOrdersManager, PageManager>(
+                builder: (_, adminOrdersManager, pageManager, __) {
+              return ListTile(
+                leading: const CircleAvatar(
+                  backgroundImage:
+                      NetworkImage("https://placeimg.com/200/200/people"),
+                ),
+                title: Text(user.userName!,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w800, color: Colors.white)),
+                subtitle: Text(
+                  user.email,
+                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                ),
+                onTap: () {
+                  adminOrdersManager.setUserFilter(user);
+                  pageManager.setPage(5);
+                },
+              );
+            })));
       }
     }
   }
+}

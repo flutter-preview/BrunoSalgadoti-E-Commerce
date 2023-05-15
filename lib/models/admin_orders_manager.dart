@@ -2,18 +2,20 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce/models/order_client.dart';
+import 'package:ecommerce/models/users.dart';
 import 'package:flutter/cupertino.dart';
 
 class AdminOrdersManager extends ChangeNotifier {
+  final List<OrderClient> _orders = [];
 
-  List<OrderClient> orders = [];
+  Users? userFilter;
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   StreamSubscription? _subscription;
 
   void updateAdmin({required bool adminEnable}) {
-    orders.clear();
+    _orders.clear();
 
     _subscription?.cancel();
     if (adminEnable) {
@@ -21,29 +23,40 @@ class AdminOrdersManager extends ChangeNotifier {
     }
   }
 
+  List<OrderClient> get filteredOrders {
+    List<OrderClient> output = _orders.reversed.toList();
+    
+    if(userFilter != null) {
+      output = output.where((o) => o.userId == userFilter!.id).toList();
+    }
+    return output;
+  }
+
+
   void _listenToOrders() {
-    _subscription = firestore
-        .collection('orders').snapshots().listen(
-            (events) {
-              for(final change in events.docChanges){
-                switch(change.type){
-                  case DocumentChangeType.added:
-                    orders.add(
-                        OrderClient.fromDocument(change.doc)
-                    );
-                    break;
-                  case DocumentChangeType.modified:
-                    final modOrder = orders.firstWhere(
-                            (element) => element.orderId == change.doc.id);
-                    modOrder.updateFromDocument(change.doc);
-                    break;
-                  case DocumentChangeType.removed:
-                    break;
-                }
-              }
-          
+    _subscription = firestore.collection('orders').snapshots().listen((events) {
+      for (final change in events.docChanges) {
+        switch (change.type) {
+          case DocumentChangeType.added:
+            _orders.add(OrderClient.fromDocument(change.doc));
+            break;
+          case DocumentChangeType.modified:
+            final modOrder = _orders
+                .firstWhere((element) => element.orderId == change.doc.id);
+            modOrder.updateFromDocument(change.doc);
+            break;
+          case DocumentChangeType.removed:
+            break;
+        }
+      }
+
       notifyListeners();
     });
+  }
+
+  void setUserFilter(Users? user) {
+    userFilter = user;
+    notifyListeners();
   }
 
   @override
