@@ -1,5 +1,5 @@
 import 'package:ecommerce/models/order_client.dart';
-import 'package:ecommerce/screens/orders/components/order_product_tile.dart';
+import 'package:ecommerce/common/orders/order_product_tile.dart';
 import 'package:flutter/material.dart';
 
 class SalesConfirmationScreen extends StatelessWidget {

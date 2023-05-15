@@ -42,6 +42,9 @@ class ItemTile extends StatelessWidget {
                               item?.product != null ? item!.product! : '');
                       return ShowAlertDialog(
                           titleText: 'Editar Item',
+                          titleColor: Colors.black,
+                          titleSize: 18,
+                          titleWeight: FontWeight.normal,
                           bodyText: '',
                           content: product != null
                               ? ListTile(

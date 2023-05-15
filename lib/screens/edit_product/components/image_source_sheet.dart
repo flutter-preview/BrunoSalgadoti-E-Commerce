@@ -80,6 +80,7 @@ class ImageSourceSheet extends StatelessWidget {
               },
               text: 'Câmera',
               fontSize: 18,
+              icon: null,
             ),
             const Divider(
               height: 5,
@@ -90,6 +91,7 @@ class ImageSourceSheet extends StatelessWidget {
               },
               text: 'Galeria',
               fontSize: 18,
+              icon: null,
             ),
             //const SizedBox(height: 8,),
             const Divider(
@@ -103,6 +105,7 @@ class ImageSourceSheet extends StatelessWidget {
               text: 'Cancelar',
               color: Colors.red,
               fontSize: 18,
+              icon: null,
             ),
           ],
         ),

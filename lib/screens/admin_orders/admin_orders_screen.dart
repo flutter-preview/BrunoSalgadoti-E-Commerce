@@ -1,7 +1,7 @@
 import 'package:ecommerce/common/custom_drawer/custom_drawer.dart';
 import 'package:ecommerce/common/empty_indicator.dart';
 import 'package:ecommerce/models/admin_orders_manager.dart';
-import 'package:ecommerce/common/order_tile.dart';
+import 'package:ecommerce/common/orders/order_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -31,7 +31,9 @@ class AdminOrdersScreen extends StatelessWidget {
               itemCount: adminOrdersManager.orders.length,
               itemBuilder: (_, index) {
                 return OrderTile(
-                    adminOrdersManager.orders.reversed.toList()[index]);
+                    adminOrdersManager.orders.reversed.toList()[index],
+                  showControls: true,
+                );
               });
         },
       ),

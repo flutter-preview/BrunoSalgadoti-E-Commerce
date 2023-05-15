@@ -124,6 +124,7 @@ class CartTile extends StatelessWidget {
                                         children: [
                                           CustomTextButton(
                                               text: 'Sim',
+                                              icon: null,
                                               color: Colors.red,
                                               onPressed: () {
                                                 cartProduct.decrement();
@@ -132,8 +133,9 @@ class CartTile extends StatelessWidget {
                                           ),
                                           CustomTextButton(
                                               text: 'NÃO',
-                                            fontSize: 18,
-                                            color: Colors.green,
+                                              icon: null,
+                                              fontSize: 18,
+                                              color: Colors.green,
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                               },

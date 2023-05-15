@@ -214,8 +214,11 @@ class AdminUsersSearch extends ChangeNotifier {
                           builder: (BuildContext context) {
                             return ShowAlertDialog(
                               titleText: 'Enviar E-mail',
+                              titleSize: 18,
+                              titleColor: Colors.black,
                               bodyText: 'Escolha para quem deseja enviar\n '
                                   'o E-mail!',
+                              bodyWeight: FontWeight.normal,
                               actions: [
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment
@@ -223,6 +226,7 @@ class AdminUsersSearch extends ChangeNotifier {
                                   children: [
                                     CustomTextButton(
                                       text: 'Este Contato',
+                                      icon: null,
                                       onPressed: () {
                                         _sendEmail(user.email, user.userName);
                                         Navigator.of(context).pop();
@@ -230,6 +234,7 @@ class AdminUsersSearch extends ChangeNotifier {
                                     ),
                                     CustomTextButton(
                                       text: 'Todos contatos!',
+                                      icon: null,
                                       onPressed: () {
                                         _sendEmail(null, null);
                                         Navigator.of(context).pop();
@@ -237,6 +242,7 @@ class AdminUsersSearch extends ChangeNotifier {
                                     ),
                                     CustomTextButton(
                                         text: 'Cancelar',
+                                        icon: null,
                                         color: Colors.red,
                                         onPressed: () {
                                           Navigator.of(context).pop();

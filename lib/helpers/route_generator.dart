@@ -2,7 +2,7 @@ import 'package:ecommerce/models/order_client.dart';
 import 'package:ecommerce/models/product.dart';
 import 'package:ecommerce/screens/address/address_screen.dart';
 import 'package:ecommerce/screens/base/base_screen.dart';
-import 'package:ecommerce/screens/cart/cart_creen.dart';
+import 'package:ecommerce/screens/cart/cart_screen.dart';
 import 'package:ecommerce/screens/checkout/checkout_screen.dart';
 import 'package:ecommerce/screens/edit_product/edit_product_screen.dart';
 import 'package:ecommerce/screens/login/login_screen.dart';

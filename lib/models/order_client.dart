@@ -3,7 +3,14 @@ import 'package:ecommerce/models/address.dart';
 import 'package:ecommerce/models/cart_manager.dart';
 import 'package:ecommerce/models/cart_product.dart';
 
-enum Status { canceled, preparing, transporting, delivered}
+enum Status {
+  canceled,
+  preparing,
+  transporting,
+  delivered,
+  keepingReturn,
+  returned
+}
 
 class OrderClient {
   OrderClient.fromCartManager(CartManager cartManager) {
@@ -14,7 +21,7 @@ class OrderClient {
     status = Status.preparing;
   }
 
-  OrderClient.fromDocument(DocumentSnapshot doc){
+  OrderClient.fromDocument(DocumentSnapshot doc) {
     orderId = doc.id;
 
     items = (doc['items'] as List<dynamic>).map((e) {
@@ -24,21 +31,53 @@ class OrderClient {
     price = doc['price'] as num;
     userId = doc['user'] as String;
     date = doc['date'] as Timestamp;
-    status = Status.values[doc['status'] as int ];
+    status = Status.values[doc['status'] as int];
     address = Address.fromMap(doc['address'] as Map<String, dynamic>);
   }
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+  DocumentReference get firestoreRef =>
+      firestore.collection('orders').doc(orderId);
+
+  void updateFromDocument(DocumentSnapshot doc) {
+    status = Status.values[doc['status'] as int];
+  }
+
   Future<void> saveOrder() async {
     firestore.collection('orders').doc(orderId).set({
-      'items' : items?.map((e) => e.toOrderItemMap()).toList(),
-      'price' : price,
-      'user' : userId,
-      'address' : address!.toMap(),
-      'status' : status!.index,
-      'date' : Timestamp.now(),
+      'items': items?.map((e) => e.toOrderItemMap()).toList(),
+      'price': price,
+      'user': userId,
+      'address': address!.toMap(),
+      'status': status!.index,
+      'date': Timestamp.now(),
     });
+  }
+
+  Function()? get back {
+    return status!.index >= Status.transporting.index &&
+            status!.index != Status.delivered.index &&
+            status!.index != Status.returned.index
+        ? () {
+            status = Status.values[status!.index - 1];
+            firestoreRef.update({'status': status!.index});
+          }
+        : null;
+  }
+
+  Function()? get advance {
+    return status!.index < Status.returned.index
+        ? () {
+            status = Status.values[status!.index + 1];
+            firestoreRef.update({'status': status!.index});
+          }
+        : null;
+  }
+
+  void cancel() {
+    status = Status.canceled;
+    firestoreRef.update({'status': status!.index});
   }
 
   String? orderId;
@@ -55,6 +94,79 @@ class OrderClient {
   Timestamp? date;
 
   String get formattedId => '#${orderId?.padLeft(6, '0')}';
+
+  String get statusText => getStatusText(status!);
+
+  String get nextStatusText => getNextStatusText(status!);
+
+  String get previousStatusText => getPreviousStatusText(status!);
+
+  String get bodyText => getBodyText(status!);
+
+  static String getStatusText(Status status) {
+    switch (status) {
+      case Status.canceled:
+        return 'Cancelado';
+      case Status.preparing:
+        return 'Em preparação';
+      case Status.transporting:
+        return 'Encomenda em transporte';
+      case Status.delivered:
+        return 'Entregue';
+      case Status.keepingReturn:
+        return 'Aguardando devolução';
+      case Status.returned:
+        return 'Encomenda Devolvida!';
+      default:
+        return '';
+    }
+  }
+
+  static String getNextStatusText(Status status) {
+    switch (status) {
+      case Status.preparing:
+        return 'Em transporte';
+      case Status.transporting:
+        return 'Entregue';
+      case Status.delivered:
+        return 'Aguardando devolução';
+      case Status.keepingReturn:
+        return 'Encomenda Devolvida';
+      default:
+        return '';
+    }
+  }
+
+  static String getPreviousStatusText(Status status) {
+    switch (status) {
+      case Status.preparing:
+        return '';
+      case Status.transporting:
+        return 'Em preparação';
+      case Status.keepingReturn:
+        return 'Entregue';
+      default:
+        return '';
+    }
+  }
+
+  static String getBodyText(Status status) {
+    switch (status) {
+      case Status.transporting:
+        return 'Confrima que a mercadoria chegou '
+            'no destinatário Correto?\n'
+            '\n---NÃO PODERÁ RETROCEDER o STATUS---';
+      case Status.delivered:
+        return 'Deseja realmente confirmar que a encomenda\n '
+            'vai ser DEVOLVIDA!?';
+      case Status.keepingReturn:
+        return 'Deseja realmente confirmar que a encomenda\n'
+            'foi DEVOLVIDA em Perfeito Estado!?\n '
+            '\n---NÃO PODERÁ RETROCEDER o STATUS---';
+      default:
+        return '';
+    }
+  }
 
   @override
   String toString() {

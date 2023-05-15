@@ -33,18 +33,18 @@ class HomeScreen extends StatelessWidget {
           Padding(
             padding: kIsWeb
                 ? const EdgeInsets.all(0)
-                : const EdgeInsets.fromLTRB(0, 22, 0, 0),
+                : const EdgeInsets.only(top: 1.8),
             child: CustomScrollView(
               slivers: [
                 SliverAppBar(
                   snap: true,
                   floating: true,
                   elevation: 4,
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: Colors.white.withAlpha(100),
                   flexibleSpace: FlexibleSpaceBar(
                         title: Image.asset(
-                            'assets/logo/storageLogo.png',
-                          width: 80,
+                            'assets/logo/storeLogo2.png',
+                          width: 150,
                           fit: BoxFit.fill,
                         ),
                         centerTitle: true,

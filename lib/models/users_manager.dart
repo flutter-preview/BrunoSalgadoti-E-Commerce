@@ -29,7 +29,7 @@ class UserManager extends ChangeNotifier {
   bool get adminEnable => users != null && users!.admin;
 
   Image? image = Image.asset(
-    'assets/logo/storageLogo.png',
+    'assets/logo/storeLogo.png',
     width: 15,
     height: 15,
   );

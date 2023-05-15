@@ -26,7 +26,7 @@ class CustomDrawerHeader extends StatelessWidget {
                    TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                  ),
                   Image.asset(
-                    'assets/logo/storageLogo.png',
+                    'assets/logo/storeLogo.png',
                     height: 130,
                     fit: BoxFit.fill,
                   )
