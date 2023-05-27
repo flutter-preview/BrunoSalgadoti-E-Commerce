@@ -9,6 +9,7 @@ class AdminOrdersManager extends ChangeNotifier {
   final List<OrderClient> _orders = [];
 
   Users? userFilter;
+  List<Status> statusFilter = [Status.preparing, Status.transporting];
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -29,9 +30,9 @@ class AdminOrdersManager extends ChangeNotifier {
     if(userFilter != null) {
       output = output.where((o) => o.userId == userFilter!.id).toList();
     }
-    return output;
+    
+    return output = output.where((o) => statusFilter.contains(o.status)).toList();
   }
-
 
   void _listenToOrders() {
     _subscription = firestore.collection('orders').snapshots().listen((events) {
@@ -49,13 +50,21 @@ class AdminOrdersManager extends ChangeNotifier {
             break;
         }
       }
-
       notifyListeners();
     });
   }
 
   void setUserFilter(Users? user) {
     userFilter = user;
+    notifyListeners();
+  }
+
+  void setStatusFilter({Status? status, bool? enabled}){
+    if(enabled!){
+      statusFilter.add(status!);
+    } else{
+      statusFilter.remove(status);
+    }
     notifyListeners();
   }
 
