@@ -1,4 +1,5 @@
 import 'package:ecommerce/common/button/custom_text_button.dart';
+import 'package:ecommerce/common/orders/export_address_dialog.dart';
 import 'package:ecommerce/common/show_alert_dialog.dart';
 import 'package:ecommerce/models/order_client.dart';
 import 'package:ecommerce/common/orders/order_product_tile.dart';
@@ -88,7 +89,47 @@ class OrderTile extends StatelessWidget {
                               text: 'Cancelar',
                               icon: null,
                               color: Colors.red,
-                              onPressed: orderClient!.cancel,
+                              onPressed: () {
+                                orderClient?.status = Status.canceled;
+                                showDialog<Status>(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return ShowAlertDialog(
+                                        titleText: 'Atenção!',
+                                        bodyText: orderClient!.bodyText,
+                                        titleWeight: FontWeight.normal,
+                                        actions: [
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment
+                                                .spaceBetween,
+                                            children: [
+                                              CustomTextButton(
+                                                  text: 'Sim',
+                                                  icon: null,
+                                                  color: Colors.red,
+                                                  onPressed: () {
+                                                    orderClient
+                                                        ?.cancel();
+                                                    Navigator.of(context)
+                                                        .pop();
+                                                  }),
+                                              CustomTextButton(
+                                                text: 'NÃO',
+                                                icon: null,
+                                                fontSize: 18,
+                                                color: Colors.green,
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop();
+                                                },
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      );
+                                    });
+                              },
                             ),
                             Column(
                               children: [
@@ -160,7 +201,12 @@ class OrderTile extends StatelessWidget {
                               text: 'Endereço',
                               icon: null,
                               color: primaryColor,
-                              onPressed: () {},
+                              onPressed: () {
+                                showDialog(context: context,
+                                    builder: (_) =>
+                                        ExportAddressDialog(orderClient?.address, orderClient),
+                                );
+                              },
                             ),
                           ],
                         )

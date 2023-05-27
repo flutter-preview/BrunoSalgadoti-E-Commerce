@@ -17,6 +17,7 @@ class OrderClient {
     items = List.from(cartManager.items);
     price = cartManager.totalPrice;
     userId = cartManager.users?.id;
+    userName = cartManager.users?.userName;
     address = cartManager.address;
     status = Status.preparing;
   }
@@ -30,6 +31,7 @@ class OrderClient {
 
     price = doc['price'] as num;
     userId = doc['user'] as String;
+    userName = doc['userName'] as String;
     date = doc['date'] as Timestamp;
     status = Status.values[doc['status'] as int];
     address = Address.fromMap(doc['address'] as Map<String, dynamic>);
@@ -49,6 +51,7 @@ class OrderClient {
       'items': items?.map((e) => e.toOrderItemMap()).toList(),
       'price': price,
       'user': userId,
+      'userName': userName,
       'address': address!.toMap(),
       'status': status!.index,
       'date': Timestamp.now(),
@@ -86,6 +89,8 @@ class OrderClient {
   num? price;
 
   String? userId;
+
+  String? userName;
 
   Address? address;
 
@@ -150,7 +155,7 @@ class OrderClient {
     }
   }
 
-  static String getBodyText(Status status) {
+  String getBodyText(Status status) {
     switch (status) {
       case Status.transporting:
         return 'Confrima que a mercadoria chegou '
@@ -163,6 +168,10 @@ class OrderClient {
         return 'Deseja realmente confirmar que a encomenda\n'
             'foi DEVOLVIDA em Perfeito Estado!?\n '
             '\n---NÃO PODERÁ RETROCEDER o STATUS---';
+      case Status.canceled:
+        return 'Pedido nº ${'#${orderId?.padLeft(6, '0')}'} será cancelado!'
+            'Realmente deseja CANCELAR o pedido?\n '
+            '\n---NÃO PODERÁ RETROCEDER o STATUS---';
       default:
         return '';
     }
@@ -170,8 +179,9 @@ class OrderClient {
 
   @override
   String toString() {
-    return 'OrderClient{firestore: $firestore, orderId: $orderId,'
-        ' items: $items, price: $price, userId: $userId,'
-        ' address: $address, date: $date}';
+    return 'OrderClient{firestore: $firestore, orderId: $orderId, '
+        'items: $items, price: $price, userId: $userId, '
+        'userName: $userName, address: $address,'
+        ' status: $status, date: $date}';
   }
 }
