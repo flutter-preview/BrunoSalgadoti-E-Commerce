@@ -19,7 +19,7 @@ class ShowAlertDialog extends StatelessWidget {
   }) : super(key: key);
 
   final String? titleText;
-  final String bodyText;
+  final String? bodyText;
   final List<Widget> actions;
   final Widget? content;
   final Color? titleColor;
@@ -49,7 +49,7 @@ class ShowAlertDialog extends StatelessWidget {
             child: ListBody(
               children: <Widget>[
                 Text(
-                  bodyText,
+                  bodyText ?? '',
                   style: TextStyle(
                     color: bodyColor,
                     fontWeight: bodyWeight,

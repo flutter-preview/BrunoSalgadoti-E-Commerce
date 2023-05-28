@@ -8,9 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-class AdminOrdersScreen extends StatelessWidget {
-   AdminOrdersScreen({Key? key}) : super(key: key);
+class AdminOrdersScreen extends StatefulWidget {
+  const AdminOrdersScreen({Key? key}) : super(key: key);
 
+  @override
+  State<AdminOrdersScreen> createState() => _AdminOrdersScreenState();
+}
+
+class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
   final PanelController _panelController = PanelController();
 
   @override
@@ -84,10 +89,10 @@ class AdminOrdersScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 GestureDetector(
-                  onTap: (){
-                    if(_panelController.isPanelClosed){
+                  onTap: () {
+                    if (_panelController.isPanelClosed) {
                       _panelController.open();
-                    } else{
+                    } else {
                       _panelController.close();
                     }
                   },
@@ -107,7 +112,7 @@ class AdminOrdersScreen extends StatelessWidget {
                 ),
                 Expanded(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: Status.values.map((s) {
                     return CheckboxListTile(
                         title: Text(OrderClient.getStatusText(s)),
@@ -116,9 +121,7 @@ class AdminOrdersScreen extends StatelessWidget {
                         value: adminOrdersManager.statusFilter.contains(s),
                         onChanged: (v) {
                           adminOrdersManager.setStatusFilter(
-                            status: s,
-                            enabled: v
-                          );
+                              status: s, enabled: v);
                         });
                   }).toList(),
                 )),

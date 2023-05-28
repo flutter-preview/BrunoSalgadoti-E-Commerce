@@ -9,7 +9,7 @@ import 'package:ecommerce/screens/login/login_screen.dart';
 import 'package:ecommerce/screens/product_details/product_details_screen.dart';
 import 'package:ecommerce/screens/sales_confirmation/sales_confirmation_screen.dart';
 import 'package:ecommerce/screens/select_product/selected_product_screen.dart';
-import 'package:ecommerce/screens/sign_up/sign_up_Screen.dart';
+import 'package:ecommerce/screens/sign_up/sign_up_screen.dart';
 import 'package:flutter/material.dart';
 
 class RouteGenerator {

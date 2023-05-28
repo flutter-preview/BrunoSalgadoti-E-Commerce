@@ -48,7 +48,7 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
-    <string>Necessário acesso a galeria para buscar imagem</string>
+    <string>Necessário acesso a galeria para buscar/salvar imagem</string>
     <key>NSCameraUsageDescription</key>
     <string>Necessário acesso a câmera para adicionar imagem</string>
     <key>NSMicrophoneUsageDescription</key>

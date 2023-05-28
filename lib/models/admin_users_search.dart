@@ -143,8 +143,8 @@ class AdminUsersSearch extends ChangeNotifier {
             child: Consumer2<AdminOrdersManager, PageManager>(
               builder: (_, adminOrdersManager, pageManager, __) {
                 return ListTile(
-                  leading: Stack(
-                    children: const <Widget>[
+                  leading: const Stack(
+                    children: <Widget>[
                       CircleAvatar(
                         backgroundImage:
                             NetworkImage("https://placeimg.com/200/200/people"),

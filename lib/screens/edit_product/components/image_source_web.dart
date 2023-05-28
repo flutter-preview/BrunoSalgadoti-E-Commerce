@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:universal_html/html.dart' as html;
+import 'package:custom_universal_html/html.dart' as html;
 import 'package:flutter/material.dart';
 
 class ImageSourceWeb extends StatefulWidget {

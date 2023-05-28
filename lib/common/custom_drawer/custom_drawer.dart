@@ -51,8 +51,8 @@ class CustomDrawer extends StatelessWidget {
               Consumer<UserManager>(
                   builder: (_, userManager, __) {
                     if(userManager.adminEnable) {
-                      return Column(
-                        children: const [
+                      return const Column(
+                        children:  [
                           Divider(),
                           DrawerTitle(
                             iconData: Icons.supervised_user_circle,

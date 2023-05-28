@@ -8,7 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:universal_html/html.dart' as html;
+import 'package:custom_universal_html/html.dart' as html;
 
 class AddTileWidget extends StatelessWidget {
   const AddTileWidget({

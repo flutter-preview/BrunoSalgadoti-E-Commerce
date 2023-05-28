@@ -99,7 +99,8 @@ class ProductsScreen extends StatelessWidget {
               padding: const EdgeInsets.all(5),
               itemCount: filteredProducts.length,
               itemBuilder: (_, index) {
-                return ProductListTile(product: filteredProducts[index]);
+                return ProductListTile(
+                    product: filteredProducts.reversed.toList()[index]);
               });
         },
       ),
