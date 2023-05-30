@@ -112,7 +112,8 @@ class Section extends ChangeNotifier {
 
     for (final original in originalItems!) {
       try {
-        if (!items!.contains(original)) {
+        if (!items!.contains(original) 
+            && (original.image as String).contains('firebase')) {
           final ref = storage.refFromURL(original.image as String);
           await ref.delete();
         }
@@ -129,11 +130,13 @@ class Section extends ChangeNotifier {
   Future<void> delete() async {
     await firestoreRef.delete();
     for (final item in items!) {
-      try {
+      if((item.image as String).contains('firebase')) {
+        try {
         final ref = storage.refFromURL(item.image as String);
         await ref.delete();
         // ignore: empty_catches
       } catch (error) {}
+      }
     }
   }
 

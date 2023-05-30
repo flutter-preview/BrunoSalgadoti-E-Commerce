@@ -138,16 +138,18 @@ class Product extends ChangeNotifier {
     }
 
     for (final image in images!) {
-      try {
-        if (!newImages!.contains(image)) {
+      if (!newImages!.contains(image) && image.contains('firebase')){
+        try {
           final ref = storage.refFromURL(image);
           await ref.delete();
+        } catch (error) {
+          return;
         }
-      } catch (error) {
-        return;
       }
     }
+
     await firestoreRef.update({'images': updateImages});
+
     images = updateImages;
 
     loading = false;

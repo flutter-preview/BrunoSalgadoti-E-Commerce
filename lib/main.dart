@@ -92,7 +92,6 @@ class MyApp extends StatelessWidget {
 
         theme: temaPadrao,
 
-      initialRoute: "/base",
       onGenerateRoute: RouteGenerator.generateRoute,
 
         debugShowCheckedModeBanner: false,
