@@ -9,11 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key,}) : super(key: key);
+  const HomeScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       drawer: const CustomDrawer(),
       body: Stack(
@@ -42,13 +43,13 @@ class HomeScreen extends StatelessWidget {
                   elevation: 4,
                   backgroundColor: Colors.white.withAlpha(100),
                   flexibleSpace: FlexibleSpaceBar(
-                        title: Image.asset(
-                            'assets/logo/storeLogo2.png',
-                          width: 150,
-                          fit: BoxFit.fill,
-                        ),
-                        centerTitle: true,
-                      ),
+                    title: Image.asset(
+                      'assets/logo/storeLogo2.png',
+                      width: 150,
+                      fit: BoxFit.fill,
+                    ),
+                    centerTitle: true,
+                  ),
                   actions: [
                     IconButton(
                       onPressed: () {

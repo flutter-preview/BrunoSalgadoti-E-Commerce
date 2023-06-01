@@ -48,7 +48,6 @@ class CartProduct extends ChangeNotifier {
     notifyListeners();
   }
 
-
   DetailsProducts? get detailsProducts {
     if (product == null) return null;
     return product?.findSize(size!);
@@ -103,6 +102,7 @@ class CartProduct extends ChangeNotifier {
   }
 
   bool get hasStock {
+    if(product != null && product!.deleted) return false;
     final size = detailsProducts;
     if (size == null) return false;
     return size.stock >= quantity!;

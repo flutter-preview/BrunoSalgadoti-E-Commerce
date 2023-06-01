@@ -96,7 +96,6 @@ class ProductsScreen extends StatelessWidget {
         builder: (_, productManager, __) {
           final filteredProducts = productManager.filteredProducts;
           return ListView.builder(
-              padding: const EdgeInsets.all(5),
               itemCount: filteredProducts.length,
               itemBuilder: (_, index) {
                 return ProductListTile(

@@ -17,6 +17,7 @@ class ProductListTile extends StatelessWidget {
         Navigator.pushNamed(context, '/product', arguments: product);
       },
       child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         child: Container(
           height: 100,
@@ -25,7 +26,9 @@ class ProductListTile extends StatelessWidget {
             children: [
               AspectRatio(
                 aspectRatio: 1,
-                child: Image(image: NetworkImage(product!.images!.first)),
+                child: Image(image: NetworkImage(product!.images!.first),
+                fit: BoxFit.fill,
+                ),
               ),
               const SizedBox(
                 width: 16,
@@ -37,7 +40,7 @@ class ProductListTile extends StatelessWidget {
                   Text(
                     product!.name!,
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -50,7 +53,7 @@ class ProductListTile extends StatelessWidget {
                     )
                         : Text(
                       'Aguadando reposição de estoque... ',
-                      style: TextStyle(fontSize: 15, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                     )
                   ),
                   product!.hasStock ?
@@ -65,7 +68,7 @@ class ProductListTile extends StatelessWidget {
                       : Text(
                     'Fora de estoque',
                     style: TextStyle(
-                      fontSize: 17,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: primaryColor,
                     ),

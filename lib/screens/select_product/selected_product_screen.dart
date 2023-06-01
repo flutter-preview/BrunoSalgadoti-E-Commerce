@@ -14,24 +14,24 @@ class SelectProductScreen extends StatelessWidget {
       ),
       backgroundColor: Colors.white,
       body: Consumer<ProductManager>(
-        builder: (_, productManager, __){
+        builder: (_, productManager, __) {
           return ListView.builder(
               itemCount: productManager.allProducts.length,
               itemBuilder: (_, index) {
-                final product = productManager.allProducts[index];
+                final product =
+                    productManager.allProducts.reversed.toList()[index];
                 return Card(
                   child: ListTile(
                     leading: Image.network(product.images!.first),
                     title: Text(product.name!),
-                    subtitle: Text(
-                        'R\$ ${product.basePrice.toStringAsFixed(2)}'),
-                    onTap: (){
+                    subtitle:
+                        Text('R\$ ${product.basePrice.toStringAsFixed(2)}'),
+                    onTap: () {
                       Navigator.of(context).pop(product);
                     },
                   ),
                 );
-          }
-          );
+              });
         },
       ),
     );

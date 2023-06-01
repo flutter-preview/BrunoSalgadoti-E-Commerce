@@ -19,7 +19,6 @@ class ItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final homeManager = context.watch<HomeManager>();
-    late final backPage = Navigator.of(context).pop();
 
     return GestureDetector(
         onTap: () {
@@ -76,15 +75,15 @@ class ItemTile extends StatelessWidget {
                                 onPressed: () async {
                                   if(product != null){
                                     item?.product = null;
-                                    backPage;
+                                    Navigator.of(context).pop();
                                   } else {
                                    final Product product =
                                    await Navigator.pushNamed(
                                         context, '/select_product') as Product;
                                    item?.product = product.id;
-                                   backPage;
+                                  // ignore: use_build_context_synchronously
+                                  Navigator.of(context).pop();
                                   }
-                                  backPage;
                                 })
                           ]);
                     });

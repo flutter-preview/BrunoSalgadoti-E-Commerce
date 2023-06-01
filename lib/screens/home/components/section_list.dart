@@ -8,9 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SectionList extends StatelessWidget {
-  const SectionList({Key? key,
-    required this.section
-  }) : super(key: key);
+  const SectionList({Key? key, required this.section}) : super(key: key);
 
   final Section section;
 
@@ -28,9 +26,9 @@ class SectionList extends StatelessWidget {
           children: [
             const SectionHeader(),
             SizedBox(
-              height: 150,
-              child: Consumer<Section>(
-                builder: (_, section, __){
+                height: 150,
+                child: Consumer<Section>(
+                  builder: (_, section, __) {
                     return Scrollbar(
                       scrollbarOrientation: ScrollbarOrientation.bottom,
                       thumbVisibility: kIsWeb ? true : false,
@@ -42,7 +40,8 @@ class SectionList extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (_, index) {
                           if (index < section.items!.length) {
-                            return ItemTile(item: section.items![index]);
+                            return ItemTile(
+                                item: section.items!.reversed.toList()[index]);
                           } else {
                             return const AddTileWidget();
                           }
@@ -53,9 +52,8 @@ class SectionList extends StatelessWidget {
                             : section.items!.length,
                       ),
                     );
-                },
-              )
-            )
+                  },
+                ))
           ],
         ),
       ),
