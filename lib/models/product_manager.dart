@@ -39,6 +39,7 @@ class ProductManager extends ChangeNotifier {
   void _listenToProducts() {
     _subscription = firestore
         .collection('products')
+        .where('deleted', isEqualTo: false)
         .snapshots()
         .listen((event) {
       allProducts.clear();
@@ -60,6 +61,12 @@ class ProductManager extends ChangeNotifier {
   void updateProducts(Product product) {
     allProducts.removeWhere((p) => p.id == product.id);
     allProducts.add(product);
+    notifyListeners();
+  }
+
+  void requestDelete(Product product) {
+    product.delete();
+    allProducts.removeWhere((p) => p.id == product.id);
     notifyListeners();
   }
 

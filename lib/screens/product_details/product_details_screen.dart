@@ -8,12 +8,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 class ProductDetailsScreen extends StatelessWidget {
-  const ProductDetailsScreen({
-    Key? key,
-    this.product
-  }) : super(key: key);
+  const ProductDetailsScreen({Key? key, this.product}) : super(key: key);
 
   final Product? product;
 
@@ -31,7 +27,7 @@ class ProductDetailsScreen extends StatelessWidget {
             actions: [
               Consumer<UserManager>(
                 builder: (_, userManager, __) {
-                  if (userManager.adminEnable) {
+                  if (userManager.adminEnable && !product!.deleted) {
                     return IconButton(
                       icon: const Icon(Icons.edit),
                       onPressed: () {
@@ -73,34 +69,39 @@ class ProductDetailsScreen extends StatelessWidget {
                         fontSize: 22, fontWeight: FontWeight.w600),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: product!.hasStock ?
-                    Text(
-                      'A partir de: ',
-                      style: TextStyle(fontSize: 15, color: Colors.grey[600]),
-                    )
-                     : Text(
-                        'Aguadando reposição de estoque... ',
-                        style: TextStyle(fontSize: 15, color: Colors.grey[600]),
-                      )
-                  ),
-                  product!.hasStock ?
-                  Text(
-                    'R\$ ${product!.basePrice.toStringAsFixed(2)}',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: primaryColor,
-                    ),
-                  )
-                  : Text(
-                    'Fora de estoque',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: primaryColor,
-                    ),
-                  ),
+                      padding: const EdgeInsets.only(top: 8),
+                      child: product!.hasStock
+                          ? Text(
+                              'A partir de: ',
+                              style: TextStyle(
+                                  fontSize: 15, color: Colors.grey[600]),
+                            )
+                          : Text(
+                              product!.deleted
+                                  ? 'Esgotado...!'
+                                  : 'Aguadando reposição de estoque...',
+                              style: TextStyle(
+                                  fontSize: 15, color: Colors.grey[600]),
+                            )),
+                  product!.hasStock
+                      ? Text(
+                          'R\$ ${product!.basePrice.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: primaryColor,
+                          ),
+                        )
+                      : Text(
+                          product!.deleted
+                              ? 'Produto não Disponível!'
+                              : 'Fora de estoque',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: primaryColor,
+                          ),
+                        ),
                   const Padding(
                     padding: EdgeInsets.only(top: 16, bottom: 8),
                     child: Text(
@@ -136,28 +137,30 @@ class ProductDetailsScreen extends StatelessWidget {
                     Consumer2<UserManager, Product>(
                         builder: (_, userManager, product, __) {
                       return CustomButton(
-                          texto: userManager.isLoggedIn
-                              ? 'Adicionar ao Carrinho'
-                              : 'Entre para Comprar',
-                          onPressed: product.selectedDetails != null
-                              ? () {
-                                  if (userManager.isLoggedIn) {
-                                    context
-                                        .read<CartManager>()
-                                        .addToCart(product);
-                                    Navigator.pushNamed(context, '/cart');
-                                  } else {
-                                    Navigator.pushNamed(context, '/login');
-                                  }
+                        texto: userManager.isLoggedIn
+                            ? 'Adicionar ao Carrinho'
+                            : 'Entre para Comprar',
+                        onPressed: product.selectedDetails != null
+                            ? () {
+                                if (userManager.isLoggedIn) {
+                                  context
+                                      .read<CartManager>()
+                                      .addToCart(product);
+                                  Navigator.pushNamed(context, '/cart');
+                                } else {
+                                  Navigator.pushNamed(context, '/login');
                                 }
-                              : null,
+                              }
+                            : null,
                       );
                     }),
                   if (!product!.hasStock)
-                    const SizedBox(
+                    SizedBox(
                       height: 44,
                       child: CustomButton(
-                        texto: 'Produto fora de estoque!',
+                        texto: product!.deleted
+                            ? 'Esgotado!'
+                            : 'Produto fora de estoque!',
                         onPressed: null,
                       ),
                     )

@@ -15,6 +15,7 @@ class Product extends ChangeNotifier {
     this.description,
     this.images,
     this.itemProducts,
+    this.deleted = false,
   }) {
     images = images ?? [];
     itemProducts = itemProducts ?? [];
@@ -29,11 +30,12 @@ class Product extends ChangeNotifier {
     notifyListeners();
   }
 
-    Product.fromDocument(DocumentSnapshot document) {
+  Product.fromDocument(DocumentSnapshot document) {
     id = document.id;
     name = document['name'] as String;
     description = document['description'] as String;
     images = List<String>.from(document.get('images') as List<dynamic>);
+    deleted = (document['deleted'] ?? false) as bool;
     itemProducts = (document['details'] as List<dynamic>)
         .map((d) => DetailsProducts.fromMap(d as Map<String, dynamic>))
         .toList();
@@ -49,6 +51,7 @@ class Product extends ChangeNotifier {
   String? id;
   String? name;
   String? description;
+  bool deleted = false;
   List<String>? images;
   List<dynamic>? newImages;
   List<DetailsProducts>? itemProducts;
@@ -71,7 +74,7 @@ class Product extends ChangeNotifier {
   }
 
   bool get hasStock {
-    return totalStock > 0;
+    return totalStock > 0 && !deleted;
   }
 
   num get basePrice {
@@ -103,6 +106,7 @@ class Product extends ChangeNotifier {
       'name': name,
       'description': description,
       'details': exportDetailsList(),
+      'deleted': deleted,
     };
 
     if (id == null) {
@@ -138,7 +142,7 @@ class Product extends ChangeNotifier {
     }
 
     for (final image in images!) {
-      if (!newImages!.contains(image) && image.contains('firebase')){
+      if (!newImages!.contains(image) && image.contains('firebase')) {
         try {
           final ref = storage.refFromURL(image);
           await ref.delete();
@@ -155,12 +159,69 @@ class Product extends ChangeNotifier {
     loading = false;
   }
 
+  Future<void> deleteProductWithZeroStockOneImage() async {
+    List<Map<String, dynamic>> exportDetailsList() {
+      final List<Map<String, dynamic>> detailsList = [];
+
+      for (final details in itemProducts!) {
+        final Map<String, dynamic> detailsData = details.toMap();
+        detailsData['stock'] = 0; // Define o estoque como 0
+        detailsList.add(detailsData);
+      }
+
+      return detailsList;
+    }
+
+    final Map<String, dynamic> data = {
+      'name': name,
+      'description': description,
+      'details': exportDetailsList(),
+      'deleted': deleted,
+    };
+    await firestoreRef.update(data);
+
+    // Deleta todas as imagens, exceto a primeira, se houver mais de uma imagem
+    if (images!.length > 1) {
+      for (int i = 1; i < images!.length; i++) {
+        final image = images![i];
+        if (image.contains('firebase')) {
+          try {
+            final ref = storage.refFromURL(image);
+            await ref.delete();
+          } catch (error) {
+            return;
+          }
+        }
+      }
+    }
+
+    // Remove as imagens do Firebase Storage
+    final List<String> imageUrls = List<String>.from(images!);
+    images = [imageUrls.first]; // Mantém apenas a primeira imagem
+
+    // Atualiza o produto no banco de dados com as imagens atualizadas
+    await firestoreRef.update({
+      'images': images,
+    });
+
+    notifyListeners();
+  }
+
+  void delete() async {
+    await deleteProductWithZeroStockOneImage(); // Chama o método para atualizar o estoque para zero
+
+    await firestoreRef.update({'deleted': true});
+    notifyListeners();
+  }
+
   Product cloneProduct() {
     return Product(
-        id: id,
-        name: name,
-        description: description,
-        images: List.from(images!),
-        itemProducts: itemProducts?.map((items) => items.clone()).toList());
+      id: id,
+      name: name,
+      description: description,
+      images: List.from(images!),
+      itemProducts: itemProducts?.map((items) => items.clone()).toList(),
+      deleted: deleted,
+    );
   }
 }

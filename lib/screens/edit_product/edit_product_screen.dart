@@ -1,4 +1,7 @@
 import 'package:ecommerce/common/button/custom_button.dart';
+import 'package:ecommerce/common/button/custom_icon_button.dart';
+import 'package:ecommerce/common/button/custom_text_button.dart';
+import 'package:ecommerce/common/show_alert_dialog.dart';
 import 'package:ecommerce/models/product.dart';
 import 'package:ecommerce/models/product_manager.dart';
 import 'package:ecommerce/screens/edit_product/components/images_form.dart';
@@ -26,6 +29,55 @@ class EditProductScreen extends StatelessWidget {
           title: Text(
               product!.id != null ? 'Editar Produto' : 'Adicionar Produto'),
           centerTitle: true,
+          actions: [
+            if (product!.id != null)
+              CustomIconButton(
+                iconData: Icons.delete,
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return ShowAlertDialog(
+                          titleText: 'Atenção!',
+                          bodyText: 'Realmente deseja deletar este produto?\n'
+                              '\nProduto: ${product!.name ?? ''};\n'
+                              '\nQtd. ${product!.totalStock}\n'
+                              '\n---ESTÁ AÇÃO NÃO PODERÁ SER DESFEITA---\n',
+                          bodyAlign: TextAlign.start,
+                          bodyWeight: FontWeight.normal,
+                          titleWeight: FontWeight.normal,
+                          actions: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomTextButton(
+                                    text: 'Sim',
+                                    icon: null,
+                                    color: Colors.red,
+                                    onPressed: () {
+                                      context
+                                          .read<ProductManager>()
+                                          .requestDelete(product!);
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                    }),
+                                CustomTextButton(
+                                  text: 'NÃO',
+                                  icon: null,
+                                  fontSize: 18,
+                                  color: Colors.green,
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                )
+                              ],
+                            )
+                          ],
+                        );
+                      });
+                },
+              )
+          ],
         ),
         backgroundColor: Colors.white,
         body: Form(
