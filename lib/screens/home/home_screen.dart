@@ -2,6 +2,7 @@ import 'package:ecommerce/common/custom_drawer/custom_drawer.dart';
 import 'package:ecommerce/models/home_manager.dart';
 import 'package:ecommerce/models/users_manager.dart';
 import 'package:ecommerce/screens/home/components/add_section_widget.dart';
+import 'package:ecommerce/screens/home/components/section_header.dart';
 import 'package:ecommerce/screens/home/components/section_list.dart';
 import 'package:ecommerce/screens/home/components/section_staggered.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -11,7 +12,10 @@ import 'package:provider/provider.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({
     Key? key,
+    this.sectionHeader,
   }) : super(key: key);
+
+  final SectionHeader? sectionHeader;
 
   @override
   Widget build(BuildContext context) {

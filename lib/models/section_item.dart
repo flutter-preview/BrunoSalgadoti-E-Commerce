@@ -1,7 +1,6 @@
 
 class SectionItem {
-
-  SectionItem({this.image, this.product});
+   SectionItem({this.image, this.product});
 
   SectionItem.fromMap(Map<String, dynamic> map) {
     image = map['image'] as String;

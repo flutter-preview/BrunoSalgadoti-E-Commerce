@@ -11,7 +11,7 @@ import 'package:flutter/foundation.dart'
 import 'package:uuid/uuid.dart';
 
 class Section extends ChangeNotifier {
-  Section({this.id, this.name, this.type, this.items}) {
+  Section({this.id, this.name, this.type, this.items, this.position}) {
     items = items ?? [];
     originalItems = List.from(items!);
   }
@@ -21,6 +21,7 @@ class Section extends ChangeNotifier {
       id = document.id;
       name = document['name'] as String;
       type = document['type'] as String;
+      position = document['position'] as int;
       items = (document['items'] as List<dynamic>)
           .map((i) => SectionItem.fromMap(i as Map<String, dynamic>))
           .toList();
@@ -32,6 +33,7 @@ class Section extends ChangeNotifier {
   String? id;
   String? name;
   String? type;
+  int? position;
   List<SectionItem>? items;
   List<SectionItem>? originalItems;
 
@@ -65,7 +67,7 @@ class Section extends ChangeNotifier {
     final Map<String, dynamic> data = {
       'name': name,
       'type': type,
-      'position': position
+      'position': position,
     };
 
     if (id == null) {
@@ -112,8 +114,8 @@ class Section extends ChangeNotifier {
 
     for (final original in originalItems!) {
       try {
-        if (!items!.contains(original) 
-            && (original.image as String).contains('firebase')) {
+        if (!items!.contains(original) &&
+            (original.image as String).contains('firebase')) {
           final ref = storage.refFromURL(original.image as String);
           await ref.delete();
         }
@@ -130,12 +132,12 @@ class Section extends ChangeNotifier {
   Future<void> delete() async {
     await firestoreRef.delete();
     for (final item in items!) {
-      if((item.image as String).contains('firebase')) {
+      if ((item.image as String).contains('firebase')) {
         try {
-        final ref = storage.refFromURL(item.image as String);
-        await ref.delete();
-        // ignore: empty_catches
-      } catch (error) {}
+          final ref = storage.refFromURL(item.image as String);
+          await ref.delete();
+          // ignore: empty_catches
+        } catch (error) {}
       }
     }
   }
@@ -156,6 +158,7 @@ class Section extends ChangeNotifier {
         id: id,
         name: name,
         type: type,
+        position: position,
         items: items?.map((e) => e.clone()).toList());
   }
 

@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 
 class HomeManager extends ChangeNotifier {
   HomeManager() {
-     _loadSections();
+    _loadSections();
   }
 
   final List<Section> _sections = [];
@@ -19,7 +19,7 @@ class HomeManager extends ChangeNotifier {
   Future<void> _loadSections() async {
     firestore.collection('home').orderBy('position').snapshots()
         .listen((snapshot) {
-       _sections.clear();
+      _sections.clear();
       for (final DocumentSnapshot document in snapshot.docs) {
         _sections.add(Section.fromDocument(document));
       }
@@ -34,6 +34,34 @@ class HomeManager extends ChangeNotifier {
   void removeSection(Section section){
     _editingSections.remove(section);
     notifyListeners();
+  }
+
+  void moveSectionUp(Section section) {
+    final int currentIndex = _editingSections.indexOf(section);
+    if (currentIndex > 0) {
+      final Section previousSection = _editingSections[currentIndex - 1];
+      _swapSections(section, previousSection);
+      notifyListeners();
+    }
+  }
+
+  void moveSectionDown(Section section) {
+    final int currentIndex = _editingSections.indexOf(section);
+    if (currentIndex < _editingSections.length - 1) {
+      final Section nextSection = _editingSections[currentIndex + 1];
+      _swapSections(section, nextSection);
+      notifyListeners();
+    }
+  }
+
+  void _swapSections(Section section1, Section section2) {
+    final int index1 = _editingSections.indexOf(section1);
+    final int index2 = _editingSections.indexOf(section2);
+    if (index1 != -1 && index2 != -1) {
+      final Section temp = _editingSections[index1];
+      _editingSections[index1] = _editingSections[index2];
+      _editingSections[index2] = temp;
+    }
   }
 
   List<Section> get sections {

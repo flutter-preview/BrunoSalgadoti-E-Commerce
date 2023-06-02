@@ -22,7 +22,7 @@ class SectionStaggered extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const SectionHeader(),
+           SectionHeader(section: section),
           Consumer<Section>(
             builder: (_, section, __) {
               return StaggeredGridView.countBuilder(
@@ -41,7 +41,7 @@ class SectionStaggered extends StatelessWidget {
                   }
                 },
                 staggeredTileBuilder: (index) =>
-                    StaggeredTile.count(2, index.isEven ? 2 : 2.68),
+                    StaggeredTile.count(2, index.isEven ? 2 : 3),
                 mainAxisSpacing: 4,
                 crossAxisSpacing: 4,
               );
