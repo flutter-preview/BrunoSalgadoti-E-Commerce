@@ -122,7 +122,9 @@ class Product extends ChangeNotifier {
         updateImages.add(newImage as String);
       } else {
         if (kIsWeb) {
-          final List<int> bytes = base64.decode(newImage.split(',').last);
+          final List<int> bytes = base64.decode(newImage
+              .split(',')
+              .last);
           final Uint8List uint8ListBytes = Uint8List.fromList(bytes);
           final metadata = SettableMetadata(contentType: 'image/jpeg');
           final task = storageRef
@@ -133,7 +135,7 @@ class Product extends ChangeNotifier {
           updateImages.add(url);
         } else {
           final UploadTask task =
-              storageRef.child(const Uuid().v4()).putFile(newImage as File);
+          storageRef.child(const Uuid().v4()).putFile(newImage as File);
           final TaskSnapshot snapshot = await task.whenComplete(() {});
           final String url = await snapshot.ref.getDownloadURL();
           updateImages.add(url);

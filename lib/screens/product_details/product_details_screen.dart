@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
-  const ProductDetailsScreen({Key? key, this.product}) : super(key: key);
+  const ProductDetailsScreen(
+      {Key? key, this.product, required String productId})
+      : super(key: key);
 
   final Product? product;
 
@@ -25,13 +27,19 @@ class ProductDetailsScreen extends StatelessWidget {
             title: Text(product!.name!),
             centerTitle: true,
             actions: [
+              IconButton(
+                  icon: const Icon(Icons.share_outlined),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/share_product',
+                        arguments: product);
+                  }),
               Consumer<UserManager>(
                 builder: (_, userManager, __) {
                   if (userManager.adminEnable && !product!.deleted) {
                     return IconButton(
                       icon: const Icon(Icons.edit),
                       onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/edit_product',
+                        Navigator.pushNamed(context, '/edit_product',
                             arguments: product);
                       },
                     );

@@ -7,13 +7,15 @@ import 'package:ecommerce/screens/checkout/checkout_screen.dart';
 import 'package:ecommerce/screens/edit_product/edit_product_screen.dart';
 import 'package:ecommerce/screens/login/login_screen.dart';
 import 'package:ecommerce/screens/product_details/product_details_screen.dart';
+import 'package:ecommerce/screens/products/components/share_product_screen.dart';
 import 'package:ecommerce/screens/sales_confirmation/sales_confirmation_screen.dart';
 import 'package:ecommerce/screens/select_product/selected_product_screen.dart';
 import 'package:ecommerce/screens/sign_up/sign_up_screen.dart';
 import 'package:flutter/material.dart';
 
+
 class RouteGenerator {
-  
+
   static Route<dynamic>? generateRoute(RouteSettings settings){
     switch( settings.name ){
 
@@ -33,6 +35,17 @@ class RouteGenerator {
       case '/product' :
         return MaterialPageRoute(
           builder:(_) => ProductDetailsScreen(
+              product: settings.arguments as Product, productId: '',
+          ),
+        );
+      case '/product_details':
+        final String productId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => ProductDetailsScreen(productId: productId),
+        );
+      case '/share_product' :
+        return MaterialPageRoute(
+          builder:(_) =>  ShareProductScreen(
               product: settings.arguments as Product,
           ),
         );

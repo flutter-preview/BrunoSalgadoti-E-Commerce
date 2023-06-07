@@ -53,5 +53,10 @@
     <string>Necessário acesso a câmera para adicionar imagem</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Necessário acesso a câmera para adicionar imagem</string>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>Necessário acesso a APP SMS</string>
+      <string>Necessário acesso ao telefone</string>
+    </array>
 </dict>
 </plist>
