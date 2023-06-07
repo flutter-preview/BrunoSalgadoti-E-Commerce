@@ -10,9 +10,11 @@ import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:custom_universal_html/html.dart' as html;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
+
 
 enum SocialMedia { facebook, twitter, instagram, whatsapp, email }
 
@@ -37,7 +39,7 @@ class ShareProductScreenState extends State<ShareProductScreen> {
           .findRenderObject() as RenderRepaintBoundary;
       ui.Image image = await boundary.toImage(pixelRatio: 1.0);
       ByteData? byteData =
-          await image.toByteData(format: ui.ImageByteFormat.png);
+      await image.toByteData(format: ui.ImageByteFormat.png);
       return byteData?.buffer.asUint8List();
     } catch (e) {
       if (kDebugMode) {
@@ -62,36 +64,37 @@ class ShareProductScreenState extends State<ShareProductScreen> {
     if (widgetImage != null) {
       String tempPath;
       if (kIsWeb) {
-        // Compartilhar imagem diretamente na página
+        // Criar objeto de blob com a imagem
         html.Blob imageBlob = html.Blob([widgetImage], 'image/png');
+
+        // Gerar URL para a imagem
         String imageUrl = html.Url.createObjectUrl(imageBlob);
 
-        // Abrir uma nova aba/janela do navegador com a imagem
-        html.window.open(imageUrl, '_blank');
-
-        return;
+        // Compartilhar imagem
+        await Share.shareXFiles([XFile(imageUrl)],
+            text: 'Visite o nosso Site: $urlShare${widget.product!.id}');
       } else {
         // Salvar a imagem no diretório temporário do dispositivo
         Directory? tempDir = await getTemporaryDirectory();
         tempPath = tempDir.path;
-      }
 
-      File imageFile = File('$tempPath/product_image.png');
-      await imageFile.writeAsBytes(widgetImage);
+        File imageFile = File('$tempPath/product_image.png');
+        await imageFile.writeAsBytes(widgetImage);
 
-      // Verificar permissão de acesso aos arquivos
-      PermissionStatus permissionStatus = await Permission.storage.status;
-      if (!permissionStatus.isGranted) {
-        permissionStatus = await Permission.storage.request();
-        if (permissionStatus.isGranted) {
+        // Verificar permissão de acesso aos arquivos
+        PermissionStatus permissionStatus = await Permission.storage.status;
+        if (!permissionStatus.isGranted) {
+          permissionStatus = await Permission.storage.request();
+          if (permissionStatus.isGranted) {
+            // Compartilhar imagem
+            await Share.shareXFiles([XFile(imageFile.path)],
+                text: 'Visite o nosso Site: $urlShare${widget.product!.id}');
+          }
+        } else {
           // Compartilhar imagem
           await Share.shareXFiles([XFile(imageFile.path)],
               text: 'Visite o nosso Site: $urlShare${widget.product!.id}');
         }
-      } else {
-        // Compartilhar imagem
-        await Share.shareXFiles([XFile(imageFile.path)],
-            text: 'Visite o nosso Site: $urlShare${widget.product!.id}');
       }
     }
   }
@@ -113,33 +116,33 @@ class ShareProductScreenState extends State<ShareProductScreen> {
     final shareText = capturedImage != null
         ? ''
         : 'Visite nossa Loja Virtual!\n '
-            '${widget.product?.name} \n  '
-            'A partir de: \n R\$ ${widget.product?.basePrice.toStringAsFixed(2)} \n '
-            '${widget.product?.description}\n'
-            '\n$urlShare${widget.product!.id}';
+        '${widget.product?.name} \n  '
+        'A partir de: \n R\$ ${widget.product?.basePrice.toStringAsFixed(2)} \n '
+        '${widget.product?.description}\n'
+        '\n$urlShare${widget.product!.id}';
 
     final urls = {
       SocialMedia.facebook:
-          'fb://post?text=$shareText&media=${widget.product!.id}',
+      'fb://post?text=$shareText&media=${widget.product!.id}',
       SocialMedia.whatsapp:
-          'whatsapp://send?text=$shareText&media=${widget.product!.id}',
+      'whatsapp://send?text=$shareText&media=${widget.product!.id}',
       SocialMedia.twitter:
-          'twitter://post?message=$shareText&media=${widget.product!.id}',
+      'twitter://post?message=$shareText&media=${widget.product!.id}',
       SocialMedia.email: _buildEmailBody(shareText),
       SocialMedia.instagram:
-          'instagram://library?AssetPath=${widget.product!.id}&InstagramCaption=$shareText',
+      'instagram://library?AssetPath=${widget.product!.id}&InstagramCaption=$shareText',
     };
 
     final defaultUrls = {
       SocialMedia.facebook:
-          'https://www.facebook.com/sharer/sharer.php?t=$shareText&u=${widget.product!.id}',
+      'https://www.facebook.com/sharer/sharer.php?t=$shareText&u=${widget.product!.id}',
       SocialMedia.whatsapp:
-          'https://api.whatsapp.com/send?text=$shareText&image=${widget.product!.id}',
+      'https://api.whatsapp.com/send?text=$shareText&image=${widget.product!.id}',
       SocialMedia.twitter:
-          'https://twitter.com/intent/tweet?text=$shareText&url=${widget.product!.id}',
+      'https://twitter.com/intent/tweet?text=$shareText&url=${widget.product!.id}',
       SocialMedia.email: _buildEmailBody(shareText),
       SocialMedia.instagram:
-          'https://www.instagram.com/share?text=$shareText&url=${widget.product!.id}',
+      'https://www.instagram.com/share?text=$shareText&url=${widget.product!.id}',
     };
 
     final url = urls[socialPlatform];
@@ -242,82 +245,82 @@ class ShareProductScreenState extends State<ShareProductScreen> {
       backgroundColor: !widget.product!.deleted ? Colors.white : primaryColor,
       body: !widget.product!.deleted
           ? Form(
-              key: formKey,
-              child: ListView(
-                children: [
-                  RepaintBoundary(
-                    key: repaintBoundaryKey,
-                    child: Card(
-                      child: Column(
-                        children: [
-                          Stack(
-                            children: [
-                              Image(
-                                image:
-                                    NetworkImage(widget.product!.images!.first),
-                                fit: BoxFit.fill,
-                              ),
-                              Image.asset(
-                                'assets/logo/storeLogo.png',
-                                width: 180,
-                                height: 450,
-                                alignment: Alignment.bottomRight,
-                              ),
-                            ],
-                          ),
-                          Text(
-                            '${widget.product?.name}',
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4),
-                            child: Text(
-                              'A partir de: ',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            'R\$ ${widget.product?.basePrice.toStringAsFixed(2)}',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: primaryColor,
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(top: 3),
-                            child: Text(
-                              'Aproveite esta Super Oferta!!',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            '${widget.product?.description}',
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ],
+        key: formKey,
+        child: ListView(
+          children: [
+            RepaintBoundary(
+              key: repaintBoundaryKey,
+              child: Card(
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        Image(
+                          image:
+                          NetworkImage(widget.product!.images!.first),
+                          fit: BoxFit.fill,
+                        ),
+                        Image.asset(
+                          'assets/logo/storeLogo.png',
+                          width: 180,
+                          height: 450,
+                          alignment: Alignment.bottomRight,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      '${widget.product?.name}',
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ),
-                ],
-              ),
-            )
-          : const Center(
-              child: EmptyIndicator(
-                title: 'Produto Indisponível',
-                iconData: Icons.border_clear,
-                image: null,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        'A partir de: ',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      'R\$ ${widget.product?.basePrice.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: primaryColor,
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(top: 3),
+                      child: Text(
+                        'Aproveite esta Super Oferta!!',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '${widget.product?.description}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
               ),
             ),
+          ],
+        ),
+      )
+          : const Center(
+        child: EmptyIndicator(
+          title: 'Produto Indisponível',
+          iconData: Icons.border_clear,
+          image: null,
+        ),
+      ),
       bottomNavigationBar: !widget.product!.deleted
           ? buildSocialButtons(context)
           : const SizedBox(),

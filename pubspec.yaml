@@ -53,7 +53,7 @@ dependencies:
   image_cropper: ^4.0.1
   path_provider: ^2.0.15
   uuid: ^3.0.7
-  dio: ^5.2.0
+  dio: ^5.2.0+1
   brasil_fields: ^1.13.1
   geolocator: ^9.0.2
   sliding_up_panel: ^2.0.0+1
@@ -61,7 +61,7 @@ dependencies:
   http: 0.13.4
   gallery_saver: ^2.3.2
   font_awesome_flutter: ^10.4.0
-  permission_handler: ^10.2.0
+  permission_handler: ^10.3.0
   share_plus: ^7.0.2
 
 dev_dependencies:

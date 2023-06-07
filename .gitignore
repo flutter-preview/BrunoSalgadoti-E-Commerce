@@ -53,3 +53,5 @@ app.*.map.json
 /lib/services/*
 /lib/services/cepaberto_service.dart
 /ios/firebase_app_id_file.json
+/functions/
+/pubspec.lock
