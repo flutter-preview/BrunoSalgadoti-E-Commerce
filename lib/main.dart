@@ -3,6 +3,7 @@ import 'package:ecommerce/models/admin_orders_manager.dart';
 import 'package:ecommerce/models/admin_users_manager.dart';
 import 'package:ecommerce/models/admin_users_search.dart';
 import 'package:ecommerce/models/cart_manager.dart';
+import 'package:ecommerce/models/create_admin_user.dart';
 import 'package:ecommerce/models/home_manager.dart';
 import 'package:ecommerce/models/orders_manager.dart';
 import 'package:ecommerce/models/product.dart';
@@ -35,6 +36,9 @@ import 'package:provider/provider.dart';
      options: DefaultFirebaseOptions.currentPlatform,
    );
 
+   // Cria o usuário administrador e a coleção correspondente
+   // na primeira execução do APP como
+   CreateAdminUser().createAdminUser();
 
    runApp(MultiProvider(
      providers: [

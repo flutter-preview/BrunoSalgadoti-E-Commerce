@@ -1,14 +1,17 @@
 import 'package:ecommerce/common/button/custom_button.dart';
 import 'package:ecommerce/models/address.dart';
 import 'package:ecommerce/models/cart_manager.dart';
+import 'package:ecommerce/models/delivery.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class AddressInputField extends StatelessWidget {
-  const AddressInputField({super.key, required this.address});
+  const AddressInputField(
+      {super.key, required this.address, required this.delivery});
 
   final Address address;
+  final Delivery delivery;
 
   @override
   Widget build(BuildContext context) {
@@ -52,17 +55,17 @@ class AddressInputField extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               Expanded(
-                flex: 3,
+                  flex: 3,
                   child: TextFormField(
-                initialValue: address.complement,
-                decoration: const InputDecoration(
-                  isDense: true,
-                  labelText: 'Complemento',
-                  hintText: 'Opcional',
-                  hintStyle: TextStyle(color: Colors.black26),
-                ),
-                onSaved: (c) => address.complement = c,
-              ))
+                    initialValue: address.complement,
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      labelText: 'Complemento',
+                      hintText: 'Opcional',
+                      hintStyle: TextStyle(color: Colors.black26),
+                    ),
+                    onSaved: (c) => address.complement = c,
+                  ))
             ],
           ),
           TextFormField(
@@ -123,25 +126,29 @@ class AddressInputField extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          CustomButton(
-              texto: 'Calcular Frete',
-              onPressed: !cartManager.loading ? () async {
-                if (Form.of(context).validate()) {
-                  Form.of(context).save();
-                  try {
-                    await context.read<CartManager>().setAddress(address);
-                  } catch (error) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('$error'),
-                        backgroundColor: Colors.red,
-                        duration: const Duration(milliseconds: 4500),
-                      ),
-                    );
-                  }
-                }
-              } : null
-          ),
+          Consumer<CartManager>(builder: (_, cartManager, __) {
+            return CustomButton(
+                texto: 'Calcular Frete',
+                onPressed: !cartManager.loading
+                    ? () async {
+                        if (Form.of(context).validate()) {
+                          Form.of(context).save();
+                          try {
+                            await cartManager.saveAuxDelivery(delivery);
+                            await cartManager.setAddress(address);
+                          } catch (error) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('$error'),
+                                backgroundColor: Colors.red,
+                                duration: const Duration(milliseconds: 4500),
+                              ),
+                            );
+                          }
+                        }
+                      }
+                    : null);
+          })
         ],
       );
     } else if (address.zipCode != null) {
@@ -151,7 +158,7 @@ class AddressInputField extends StatelessWidget {
           '${address.street}, ${address.number}\n'
           '${address.district}\n'
           '${address.city} - ${address.state}\n'
-          '\n${address.complement ?? '' }',
+          '\n${address.complement ?? ''}',
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,

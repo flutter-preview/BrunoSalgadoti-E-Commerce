@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce/models/address.dart';
 import 'package:ecommerce/models/cart_product.dart';
+import 'package:ecommerce/models/delivery.dart';
 import 'package:ecommerce/models/product.dart';
 import 'package:ecommerce/models/users.dart';
 import 'package:ecommerce/models/users_manager.dart';
@@ -14,6 +15,7 @@ class CartManager extends ChangeNotifier {
   List<CartProduct> items = [];
   Users? users;
   Address? address;
+  Delivery? delivery;
   num productsPrice = 0.0;
   num? deliveryPrice;
 
@@ -54,7 +56,7 @@ class CartManager extends ChangeNotifier {
   }
 
   Future<void> _loadUserAddress() async {
-    if(users?.address != null &&
+    if (users?.address != null &&
         await calculateDelivery(users!.address!.lat!, users!.address!.long!)) {
       address = users!.address;
       notifyListeners();
@@ -84,7 +86,7 @@ class CartManager extends ChangeNotifier {
   }
 
   void clear() {
-    for(final cartProduct in items) {
+    for (final cartProduct in items) {
       users!.cartReference.doc(cartProduct.id).delete();
     }
     items.clear();
@@ -139,15 +141,15 @@ class CartManager extends ChangeNotifier {
         final latitude = position.latitude;
         final longitude = position.longitude;
 
-          address = Address(
-            zipCode: viaCepAddress.cep,
-            city: viaCepAddress.cidade,
-            state: viaCepAddress.estado,
-            street: viaCepAddress.logradouro,
-            district: viaCepAddress.bairro,
-            lat: latitude,
-            long: longitude,
-          );
+        address = Address(
+          zipCode: viaCepAddress.cep,
+          city: viaCepAddress.cidade,
+          state: viaCepAddress.estado,
+          street: viaCepAddress.logradouro,
+          district: viaCepAddress.bairro,
+          lat: latitude,
+          long: longitude,
+        );
         loading = false;
       } catch (error) {
         loading = false;
@@ -161,15 +163,15 @@ class CartManager extends ChangeNotifier {
         final cepAbertoAddress =
             await cepAbertoService.getAddressFromZipCode(cep);
 
-          address = Address(
-            street: cepAbertoAddress.logradouro,
-            district: cepAbertoAddress.bairro,
-            zipCode: cepAbertoAddress.cep,
-            city: cepAbertoAddress.cidade!.nome,
-            state: cepAbertoAddress.estado!.sigla,
-            lat: cepAbertoAddress.latitude,
-            long: cepAbertoAddress.longitude,
-          );
+        address = Address(
+          street: cepAbertoAddress.logradouro,
+          district: cepAbertoAddress.bairro,
+          zipCode: cepAbertoAddress.cep,
+          city: cepAbertoAddress.cidade!.nome,
+          state: cepAbertoAddress.estado!.sigla,
+          lat: cepAbertoAddress.latitude,
+          long: cepAbertoAddress.longitude,
+        );
         loading = false;
       } catch (error) {
         loading = false;
@@ -178,12 +180,26 @@ class CartManager extends ChangeNotifier {
     }
   }
 
-  Future<void> setAddress(Address address) async {
+  Future<void> saveAuxDelivery(Delivery delivery) async {
     loading = true;
 
+    final collectionReference = firestore.collection('aux');
+    final deliveryMap = delivery.toMap();
+
+    // Usa o método set com a opção merge para criar ou atualizar o documento
+    await collectionReference
+        .doc('delivery')
+        .set(deliveryMap, SetOptions(merge: true));
+    await collectionReference.doc('ordercounter').set({'current': 1});
+
+    loading = false;
+  }
+
+  Future<void> setAddress(Address address) async {
+    loading = true;
     this.address = address;
 
-    if(await calculateDelivery(address.lat!, address.long!)){
+    if (await calculateDelivery(address.lat!, address.long!)) {
       users!.setAddress(address);
       loading = false;
     } else {
@@ -214,11 +230,10 @@ class CartManager extends ChangeNotifier {
     //Convertendo a distância de M Para KM
     distanceClient /= 1000.0;
 
-    if(distanceClient > maximumDeliveryDistance){
+    if (distanceClient > maximumDeliveryDistance) {
       return false;
     }
     deliveryPrice = basePriceDelivery + distanceClient * kmForDelivery;
     return true;
   }
-
 }

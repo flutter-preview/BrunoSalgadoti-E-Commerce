@@ -1,5 +1,6 @@
 import 'package:ecommerce/models/address.dart';
 import 'package:ecommerce/models/cart_manager.dart';
+import 'package:ecommerce/models/delivery.dart';
 import 'package:ecommerce/screens/address/components/address_input_field.dart';
 import 'package:ecommerce/screens/address/components/cep_input_field.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class AddressCard extends StatelessWidget {
           child: Consumer<CartManager>(
             builder: (_, cartManager, __) {
               final address = cartManager.address ?? Address();
+              final delivery = cartManager.delivery ?? Delivery();
 
               return Form(
                 child: Column(
@@ -31,7 +33,7 @@ class AddressCard extends StatelessWidget {
                       ),
                     ),
                     CepInputField(address: address),
-                    AddressInputField(address: address),
+                    AddressInputField(address: address, delivery: delivery,),
                   ],
                 ),
               );
