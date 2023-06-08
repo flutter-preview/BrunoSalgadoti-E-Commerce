@@ -55,3 +55,4 @@ app.*.map.json
 /ios/firebase_app_id_file.json
 /functions/
 /pubspec.lock
+/.firebase/

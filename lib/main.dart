@@ -9,7 +9,6 @@ import 'package:ecommerce/models/product.dart';
 import 'package:ecommerce/models/product_manager.dart';
 import 'package:ecommerce/models/users.dart';
 import 'package:ecommerce/models/users_manager.dart';
-import 'package:ecommerce/services/db_api/firebase_options.dart';
 import 'dart:core';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -31,9 +30,9 @@ import 'package:provider/provider.dart';
    WidgetsFlutterBinding.ensureInitialized();
 
    //Configurado com o FlutterFire CLI
-   await Firebase.initializeApp(
-     options: DefaultFirebaseOptions.currentPlatform,
-   );
+   await Firebase.initializeApp();
+   //   options: DefaultFirebaseOptions.currentPlatform,
+   // );
 
 
    runApp(MultiProvider(
