@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 
+
  final  ThemeData temaPadrao = ThemeData(
     primaryColor: const Color.fromARGB(255, 4, 125, 141),
     scaffoldBackgroundColor: const Color.fromARGB(255, 4, 125, 141),
