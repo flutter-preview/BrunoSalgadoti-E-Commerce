@@ -66,6 +66,15 @@ class UserManager extends ChangeNotifier {
 
       await users.saveData();
 
+      // Verifica se este é o primeiro usuário a se cadastrar
+      QuerySnapshot adminsQuery = await firestore.collection('admins').limit(1).get();
+      if (adminsQuery.docs.isEmpty) {
+        // Cria o documento 'admin' na coleção 'admins' com o ID do usuário admin
+        await firestore.collection('admins').doc(users.id).set({
+          'user': users.id,
+        });
+      }
+
       onSuccess();
     } on FirebaseAuthException catch (error) {
       onFail(getErrorString(error.code));
