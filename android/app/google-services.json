@@ -1,37 +1,37 @@
 {
   "project_info": {
-    "project_number": "465193736932",
-    "project_id": "lojavirtual-brn-infodev",
-    "storage_bucket": "lojavirtual-brn-infodev.appspot.com"
+    "project_number": "796384052074",
+    "project_id": "brninfodev-lojavirtual",
+    "storage_bucket": "brninfodev-lojavirtual.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:465193736932:android:ef94f026a024a5d5b7eaf1",
+        "mobilesdk_app_id": "1:796384052074:android:35ce6503ca69f665cc9b13",
         "android_client_info": {
           "package_name": "br.com.brninfodev.ecommerce"
         }
       },
       "oauth_client": [
         {
-          "client_id": "465193736932-kd80fbtjgb7is16ic3tofrtu5suk7vk7.apps.googleusercontent.com",
+          "client_id": "796384052074-jqtjd1pjg4i5pvmudmgu10jlmmmtpmus.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBO1eXlY4wv5sflN_IRrup-Dv8tPeRqcxI"
+          "current_key": "AIzaSyBKoODfkweFFsUDrkOZ5hoPwDdX1HS88rE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "465193736932-kd80fbtjgb7is16ic3tofrtu5suk7vk7.apps.googleusercontent.com",
+              "client_id": "796384052074-jqtjd1pjg4i5pvmudmgu10jlmmmtpmus.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "465193736932-u1nq8ic5m9820lu6405m383dh62mobgl.apps.googleusercontent.com",
+              "client_id": "796384052074-p3v9d48omqj1p8v6mrve71ein2aa79ap.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "br.com.brninfodev.ecommerce"

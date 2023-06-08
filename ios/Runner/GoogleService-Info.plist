@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>465193736932-u1nq8ic5m9820lu6405m383dh62mobgl.apps.googleusercontent.com</string>
+	<string>796384052074-p3v9d48omqj1p8v6mrve71ein2aa79ap.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.465193736932-u1nq8ic5m9820lu6405m383dh62mobgl</string>
+	<string>com.googleusercontent.apps.796384052074-p3v9d48omqj1p8v6mrve71ein2aa79ap</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCNMhBdjDMhElSgIhZeWy1juWIAg-WucQ8</string>
+	<string>AIzaSyBDDcwjCiVhZasM3lBLy7gLNVdexj7fc7A</string>
 	<key>GCM_SENDER_ID</key>
-	<string>465193736932</string>
+	<string>796384052074</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>br.com.brninfodev.ecommerce</string>
 	<key>PROJECT_ID</key>
-	<string>lojavirtual-brn-infodev</string>
+	<string>brninfodev-lojavirtual</string>
 	<key>STORAGE_BUCKET</key>
-	<string>lojavirtual-brn-infodev.appspot.com</string>
+	<string>brninfodev-lojavirtual.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:465193736932:ios:8d23ef4d0d6f808db7eaf1</string>
+	<string>1:796384052074:ios:cd01c8f945044066cc9b13</string>
 </dict>
 </plist>
