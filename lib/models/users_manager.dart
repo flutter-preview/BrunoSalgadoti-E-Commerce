@@ -34,10 +34,9 @@ class UserManager extends ChangeNotifier {
     height: 15,
   );
 
-  Future<void> signIn(
-      {required Users users,
-      required Function onFail,
-      required Function onSuccess}) async {
+  Future<void> signIn({required Users users,
+    required Function onFail,
+    required Function onSuccess}) async {
     loading = true;
     try {
       final UserCredential result = await _auth.signInWithEmailAndPassword(
@@ -52,10 +51,9 @@ class UserManager extends ChangeNotifier {
     loading = false;
   }
 
-  Future<void> singUp(
-      {required Users users,
-      required Function onFail,
-      required Function onSuccess}) async {
+  Future<void> singUp({required Users users,
+    required Function onFail,
+    required Function onSuccess}) async {
     loading = true;
     try {
       final UserCredential result = await _auth.createUserWithEmailAndPassword(
@@ -67,12 +65,16 @@ class UserManager extends ChangeNotifier {
       await users.saveData();
 
       // Verifica se este é o primeiro usuário a se cadastrar
-      QuerySnapshot adminsQuery = await firestore.collection('admins').limit(1).get();
+      QuerySnapshot adminsQuery = await firestore.collection('admins')
+          .limit(1)
+          .get();
       if (adminsQuery.docs.isEmpty) {
         // Cria o documento 'admin' na coleção 'admins' com o ID do usuário admin
         await firestore.collection('admins').doc(users.id).set({
           'user': users.id,
         });
+        users.admin =
+        true; // Define o usuário como administrador no primeiro acesso
       }
 
       onSuccess();
@@ -93,11 +95,11 @@ class UserManager extends ChangeNotifier {
       final User currentUser = user ?? _auth.currentUser!;
       if (currentUser.uid.isNotEmpty) {
         final DocumentSnapshot docUsers =
-            await firestore.collection('users').doc(currentUser.uid).get();
+        await firestore.collection('users').doc(currentUser.uid).get();
         users = Users.fromDocument(docUsers);
 
         final docAdmin =
-            await firestore.collection('admins').doc(users?.id).get();
+        await firestore.collection('admins').doc(users?.id).get();
         if (docAdmin.exists) {
           users?.admin = true;
         }
